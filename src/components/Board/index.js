@@ -3,6 +3,8 @@ import { actionItemClick } from "@/slice/menuSlice";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { socket } from "@/socket";
+
 const Board = () => {
     const dispatch = useDispatch();
     const drawHistory = useRef([]);
@@ -34,17 +36,71 @@ const Board = () => {
     }, [actionMenuItem])
 
     useEffect(() => {
-        if (!canvasRef.current) return;
+        if (!canvasRef.current) return
         const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
+        const context = canvas.getContext('2d')
 
-        const changeConfig = () => {
-            context.strokeStyle = color;
-            context.lineWidth = size;
+        const changeConfig = (color, size) => {
+            context.strokeStyle = color
+            context.lineWidth = size
         }
 
-        changeConfig();
+        const handleChangeConfig = (config) => {
+            console.log("config", config)
+            changeConfig(config.color, config.size)
+        }
+        changeConfig(color, size)
+        socket.on('changeConfig', handleChangeConfig)
+
+        return () => {
+            socket.off('changeConfig', handleChangeConfig)
+        }
     }, [color, size])
+
+    // useEffect(() => {
+    //     if (!canvasRef.current) return;
+    //     const canvas = canvasRef.current;
+    //     const context = canvas.getContext('2d');
+
+    //     console.log("Change ", color, " ", size);
+
+    //     const changeConfig = (color, size) => {
+    //         console.log("change config")
+    //         context.strokeStyle = color
+    //         context.lineWidth = size
+    //     }
+
+    //     const handleChangeConfig = (config) => {
+    //         console.log("config", config)
+    //         changeConfig(config.color, config.size)
+    //     }
+
+    //     changeConfig(color, size)
+    //     socket.on('changeConfig', handleChangeConfig)
+
+    //     return () => {
+    //         socket.off('changeConfig', handleChangeConfig)
+    //     }
+
+    //     // const changeConfig = (color, size) => {
+    //     //     context.strokeStyle = color;
+    //     //     context.lineWidth = size;
+    //     // }
+
+    //     // const handleChangeConfig = (config) =>{
+    //     //     console.log(config);
+    //     //     changeConfig(config.color, config,size);
+    //     // }
+
+    //     // changeConfig(color, size);
+    //     // // socket.on('changeConfig', () => changeConfig(config.color, config.size))
+    //     // socket.on('changeConfig', handleChangeConfig)
+
+    //     // return () => {
+    //     //     socket.off('changeConfig', handleChangeConfig)
+    //     // }
+
+    // }, [color, size])
 
     useLayoutEffect(() => {
         if (!canvasRef.current) return;
@@ -68,6 +124,7 @@ const Board = () => {
         const handleMouseDown = (e) => {
             shouldDraw.current = true;
             beginPath(e.clientX, e.clientY);
+            socket.emit('beginPath', { x: e.clientX, y: e.clientY })
         }
 
         const handleMouseUp = (e) => {
@@ -80,16 +137,26 @@ const Board = () => {
         const handleMouseMove = (e) => {
             if (!shouldDraw.current) return;
             drawLine(e.clientX, e.clientY);
+            socket.emit('drawLine', { x: e.clientX, y: e.clientY })
         }
+
+        const handleBeginPath = (path) => beginPath(path.x, path.y);
+        const handleDrawLine = (path) => drawLine(path.x, path.y);
 
         canvas.addEventListener('mousedown', handleMouseDown);
         canvas.addEventListener('mouseup', handleMouseUp);
         canvas.addEventListener('mousemove', handleMouseMove);
 
+        socket.on('beginPath', handleBeginPath);
+        socket.on('drawLine', handleDrawLine);
+
         return () => {
             canvas.removeEventListener('mousedown', handleMouseDown);
             canvas.removeEventListener('mouseup', handleMouseUp);
             canvas.removeEventListener('mousemove', handleMouseMove);
+
+            socket.off('beginPath', handleBeginPath);
+            socket.off('drawLine', handleDrawLine);
         }
     }, [])
 
