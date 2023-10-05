@@ -5,6 +5,7 @@ import { COLORS, MENU_ITEMS } from '@/constants';
 import { changeBrushSize, changeColor } from '@/slice/toolboxSlice';
 
 import { socket } from '@/socket';
+import { useEffect, useState } from 'react';
 
 const ToolBox = () => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const ToolBox = () => {
         dispatch(changeColor({ item: activeMenuItem, color: newColor }));
         socket.emit('changeConfig', { color: newColor, size });
     }
+
     return (
         <div className={styles.toolboxContainer}>
             {showStrokeToolOption &&

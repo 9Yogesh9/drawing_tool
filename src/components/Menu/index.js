@@ -4,15 +4,29 @@ import styles from './index.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { MENU_ITEMS } from '@/constants';
 import { actionItemClick, menuItemClick } from '@/slice/menuSlice';
+import { socket } from '@/socket';
 import cx from "classnames";
+import { useEffect } from 'react';
 
 const Menu = () => {
     const dispatch = useDispatch();
     const activeMenuItem = useSelector((state) => state.menu.activeMenuItem);
 
+    const setActionItem = (pen_eraser) => {
+        dispatch(menuItemClick(pen_eraser.item));
+    }
+
+    useEffect(() => {
+        socket.on("menuItem", setActionItem);
+
+        return () => {
+            socket.off("menuItem", setActionItem);
+        }
+    }, [activeMenuItem])
+
     const handleMenuClick = (itemName) => {
         dispatch(menuItemClick(itemName));
-        actionItemClick
+        socket.emit('menuItem', { item: itemName });
     }
 
     const handleActionItemClick = (itemName) => {

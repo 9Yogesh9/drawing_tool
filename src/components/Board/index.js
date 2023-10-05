@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { socket } from "@/socket";
+import { changeBrushSize, changeColor } from "@/slice/toolboxSlice";
 
 const Board = () => {
     const dispatch = useDispatch();
@@ -29,10 +30,26 @@ const Board = () => {
             if (historyPointer.current > 0 && actionMenuItem === MENU_ITEMS.UNDO) historyPointer.current -= 1
             if (historyPointer.current < drawHistory.current.length - 1 && actionMenuItem === MENU_ITEMS.REDO) historyPointer.current += 1
             const imageData = drawHistory.current[historyPointer.current]
+
+            socket.emit('undo_redo', { item : actionMenuItem });
+
+            context.putImageData(imageData, 0, 0)
+        }
+
+        const handleUndoRedo = (action) => {
+
+            if (historyPointer.current > 0 && action.item === 'UNDO') historyPointer.current -= 1
+            if (historyPointer.current < drawHistory.current.length - 1 && action.item === 'REDO') historyPointer.current += 1
+            const imageData = drawHistory.current[historyPointer.current]
+
             context.putImageData(imageData, 0, 0)
         }
 
         dispatch(actionItemClick(null))
+
+        socket.on('undo_redo', handleUndoRedo);
+        return () => socket.off('undo_redo', handleUndoRedo);
+
     }, [actionMenuItem])
 
     useEffect(() => {
@@ -43,64 +60,19 @@ const Board = () => {
         const changeConfig = (color, size) => {
             context.strokeStyle = color
             context.lineWidth = size
+            dispatch(changeBrushSize({ item: activeMenuItem, size }));
+            dispatch(changeColor({ item: activeMenuItem, color }));
         }
 
         const handleChangeConfig = (config) => {
-            console.log("config", config)
             changeConfig(config.color, config.size)
         }
+
         changeConfig(color, size)
         socket.on('changeConfig', handleChangeConfig)
 
-        return () => {
-            socket.off('changeConfig', handleChangeConfig)
-        }
+        return () => socket.off('changeConfig', handleChangeConfig);
     }, [color, size])
-
-    // useEffect(() => {
-    //     if (!canvasRef.current) return;
-    //     const canvas = canvasRef.current;
-    //     const context = canvas.getContext('2d');
-
-    //     console.log("Change ", color, " ", size);
-
-    //     const changeConfig = (color, size) => {
-    //         console.log("change config")
-    //         context.strokeStyle = color
-    //         context.lineWidth = size
-    //     }
-
-    //     const handleChangeConfig = (config) => {
-    //         console.log("config", config)
-    //         changeConfig(config.color, config.size)
-    //     }
-
-    //     changeConfig(color, size)
-    //     socket.on('changeConfig', handleChangeConfig)
-
-    //     return () => {
-    //         socket.off('changeConfig', handleChangeConfig)
-    //     }
-
-    //     // const changeConfig = (color, size) => {
-    //     //     context.strokeStyle = color;
-    //     //     context.lineWidth = size;
-    //     // }
-
-    //     // const handleChangeConfig = (config) =>{
-    //     //     console.log(config);
-    //     //     changeConfig(config.color, config,size);
-    //     // }
-
-    //     // changeConfig(color, size);
-    //     // // socket.on('changeConfig', () => changeConfig(config.color, config.size))
-    //     // socket.on('changeConfig', handleChangeConfig)
-
-    //     // return () => {
-    //     //     socket.off('changeConfig', handleChangeConfig)
-    //     // }
-
-    // }, [color, size])
 
     useLayoutEffect(() => {
         if (!canvasRef.current) return;
@@ -132,12 +104,20 @@ const Board = () => {
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
             drawHistory.current.push(imageData);
             historyPointer.current = drawHistory.current.length - 1;
+            socket.emit('historySync', { })
         }
 
         const handleMouseMove = (e) => {
             if (!shouldDraw.current) return;
             drawLine(e.clientX, e.clientY);
             socket.emit('drawLine', { x: e.clientX, y: e.clientY })
+        }
+
+        const handleHistory = () => {
+            shouldDraw.current = false;
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            drawHistory.current.push(imageData);
+            historyPointer.current = drawHistory.current.length - 1;
         }
 
         const handleBeginPath = (path) => beginPath(path.x, path.y);
@@ -149,6 +129,7 @@ const Board = () => {
 
         socket.on('beginPath', handleBeginPath);
         socket.on('drawLine', handleDrawLine);
+        socket.on('historySync', handleHistory);
 
         return () => {
             canvas.removeEventListener('mousedown', handleMouseDown);
@@ -157,6 +138,7 @@ const Board = () => {
 
             socket.off('beginPath', handleBeginPath);
             socket.off('drawLine', handleDrawLine);
+            socket.off('historySync', handleHistory);
         }
     }, [])
 
