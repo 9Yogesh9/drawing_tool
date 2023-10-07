@@ -1,40 +1,94 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Drawing Tool 🎨✍️
+![React](https://img.shields.io/badge/-React-61DAFB?style=flat-square&logo=react&logoColor=white)
+![Next.js](https://img.shields.io/badge/-Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
+![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/-Express.js-000000?style=flat-square&logo=express&logoColor=white)
+![Styled Components](https://img.shields.io/badge/-Styled%20Components-DB7093?style=flat-square&logo=styled-components&logoColor=white)
+![Vercel](https://img.shields.io/badge/-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
-## Getting Started
+A versatile and interactive drawing tool crafted with passion. Dive in to explore, draw, and express your creativity digitally!
+Leverage our web application, meticulously engineered using Next.js and Node.js, to collaborate seamlessly with colleagues worldwide. By accessing the identical link in a distinct browser tab, all drawing, erasure, undo, and redo actions synchronize in real-time, ensuring a unified experience for all participants.
 
-First, run the development server:
+![GIF showing the drawing tool in action](public/Drawing-tool.gif)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 **Live Demo**: [Drawing Tool](https://drawing-tool-phi.vercel.app/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features 🌟
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- **Freestyle Drawing**: Unleash your creativity with freehand drawing.
+- **Color Palette**: Choose from a range of colors.
+- **Easy Undo/Redo**: Made a mistake? Just undo it with a single click.
+- **Export Options**: Save your masterpieces in JPEG formats.
+- **Only Desktop/Laptop**: Works beautifully on desktop/laptops.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## 🛠️ **Tech Stack**
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Drawing Tool is built with the power and simplicity of several leading technologies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Frontend**:
+  - ![React](https://img.shields.io/badge/-React-61DAFB?style=flat-square&logo=react&logoColor=white) React.js: A JavaScript library for building user interfaces.
+  - ![Next.js](https://img.shields.io/badge/-Next.js-000000?style=flat-square&logo=next.js&logoColor=white) Next.js: A React framework for server-rendered applications.
 
-## Learn More
+- **Backend**:
+  - ![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white) Node.js: A JavaScript runtime built on Chrome's V8 engine.
+  - ![Express.js](https://img.shields.io/badge/-Express.js-000000?style=flat-square&logo=express&logoColor=white) Express.js: A minimal and flexible Node.js web application framework.
 
-To learn more about Next.js, take a look at the following resources:
+- **Styling and UI**:
+  - ![Styled Components](https://img.shields.io/badge/-Styled%20Components-DB7093?style=flat-square&logo=styled-components&logoColor=white) Styled Components: Visual primitives for component-centric styling.
+  
+- **Deployment**:
+  - ![Vercel](https://img.shields.io/badge/-Vercel-000000?style=flat-square&logo=vercel&logoColor=white) Vercel: A platform optimized for frontend and serverless deployment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Other**:
+  - Tools like WebSockets, Canvas API, etc.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Table of Contents
 
-## Deploy on Vercel
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [Server](#server)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Installation 📦
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/9Yogesh9/drawing_tool.git
+   ```
+
+2. Navigate to the project directory:
+   ```bash
+   cd drawing_tool
+   ```
+
+3. Install the required dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Start the application:
+   ```bash
+   npm start
+   ```
+
+## Usage 🖌️
+
+1. Open the application in your browser.
+2. Open the same application in another browser tab.
+3. Choose a tool from the toolbar.
+4. Select a color from the palette.
+5. Start drawing on the canvas.
+6. All of your actions will be in sync across the browser tabs. Enjoy!
+
+## Server configurations 📡 : [Server Link](https://github.com/9Yogesh9/drawing_tool_server)
+
+The server for this app is configured in node.js and will be needed to get the activites in sync across all instances. Please check out : https://github.com/9Yogesh9/drawing_tool_server
+
+## Contributing 🤝
+
+We welcome contributions from everyone.
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request!
